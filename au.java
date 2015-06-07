@@ -18,15 +18,17 @@ public class au {
 		} catch (IOException e) {
 			System.out.println(e.toString());
 		}
-		
+
+		save save = new save();
+
 		try {
-			
-			
+
 			ss = new ServerSocket(8888);
 
 			while (true) {
 				s = ss.accept();
-				server = new au1(s,f2);
+				System.out.println(s.getLocalAddress());
+				server = new au1(s, f2, save);
 				server.start();
 			}
 		} catch (Exception e) {
@@ -41,17 +43,49 @@ class au1 extends Thread {
 
 	File f2 = null;
 	Socket s;
-	ArrayList<Socket> connectsocket = new ArrayList<Socket>();
-	
-	au1(Socket s,File f2) {
+
+	save save ;
+
+	au1(Socket s, File f2, save save) {
 		this.s = s;
 		this.f2 = f2;
-		connectsocket.add(s);
+		this.save=save;
+		save.savesocket(s);
 	}
 
 	public void run() {
 
+
+		 
+
 	}
 }
 
+class save {
 
+	ArrayList<String> loguser = new ArrayList<String>();
+	ArrayList<Socket> connectsocket = new ArrayList<Socket>();
+
+	public void savename(String name) {
+		this.loguser.add(name);
+	}
+
+	public void savesocket(Socket s) {
+		this.connectsocket.add(s);
+	}
+
+	public ArrayList<String> a() {
+
+		return loguser;
+
+	}
+
+	public ArrayList<Socket> b() {
+
+		return connectsocket;
+
+	}
+	public int si () {
+		return loguser.size();
+	}
+}
