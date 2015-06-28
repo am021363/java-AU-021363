@@ -1,0 +1,68 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.IO;
+using System.Net;
+using System.Net.Sockets;
+namespace WindowsFormsApplication2
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            string fileName;
+            byte[] prebuffer; //傳送前
+            byte[] postbuffer; //傳送後
+            string ip = "127.0.0.1";
+            int port = 8888;
+
+            if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                System.IO.StreamReader sr = new System.IO.StreamReader(openFileDialog1.FileName);
+                fileName = sr.ReadToEnd();
+                this.fileName = fileName; 
+                sr.Close();
+            }
+
+            IPHostEntry hoste = Dns.GetHostEntry(ip);//將主機名稱或 IP 位址解析至 IPHostEntry 執行個體
+            IPEndPoint server = new IPEndPoint(hoste.AddressList[0], port);//取得或設定與主機關聯的 IP 位址清單
+
+            //建立TCP連線
+            //使用指定的通訊協定家族 (Family)、通訊端類型和通訊協定，初始化 Socket 類別的新執行個體
+            Socket client = new Socket(AddressFamily.InterNetwork,
+                    SocketType.Stream, ProtocolType.Tcp);//IP 第 4 版位址。
+            /*支援可靠、雙向、連接架構的位元組資料流，而不會導致資料重複且不需保留界限。 這個類型的 Socket 可與單一對等端通訊，
+            而在可以開始通訊之前必須連接遠端主機。 Stream 會使用「傳輸控制通訊協定」(Tcp) ProtocolType 以及 InterNetworkAddressFamily。*/
+            
+            //連線
+            client.Connect(server);
+
+            string string1 = String.Format("This is text data that precedes the file.{0}", Environment.NewLine);
+            byte[] preBuf = Encoding.ASCII.GetBytes(string1);
+
+            string string2 = String.Format("This is text data that will follow the file.{0}", Environment.NewLine);
+            byte[] postBuf = Encoding.ASCII.GetBytes(string2);
+
+            //使用指定的 TransmitFileOptions 值，將檔案 fileName 和資料緩衝區傳送至已連接的 Socket 物件
+            client.SendFile(this.fileName, preBuf, postBuf, TransmitFileOptions.UseDefaultWorkerThread);
+            client.Shutdown(SocketShutdown.Both);
+            client.Close();
+           
+
+        }
+
+
+        public string fileName { get; set; }
+    }
+}
