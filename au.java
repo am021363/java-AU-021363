@@ -613,66 +613,30 @@ class save {
 	public int gg() {
 		return connectsocket.size();
 	}
+	public void getdata(){
+        
+        InputStream netIn=server.getInputStream();
+	DIS=new DataInputStream(Is); 
+	PS=new PrintStream(Os); 
+  	DataInputStream in=new DataInputStream(System.in);     	
+	filename=DIS.readLine();
+        File file=new File(filename);
+        file.createNewFile();        
+	String datasize="";
+	int datasize2;
+        InputStream in=new DataInputStream(new BufferedInputStream(netIn));
+        RandomAccessFile raf=new RandomAccessFile(file,"rw");
+        byte[] buf=new byte[datasize2];
+        int num=in.read(buf);         
+        while(num!=(-1)){
+              raf.write(buf,0,num);
+              raf.skipBytes(num);
+              num=in.read(buf);
+        }
+        in.close();
+        raf.close();
+    }
 }
-/*
-import java.util.*;
-import java.io.*;
-import java.net.*;
-
-
-class dataio{
-
-
-	public static void main(String{}args){
-
-		ServerSocket ss=new ServerSocket("127.0.0.1",8888);
-		Socket cs=null;
-		InputStreamReader isr=null;
-		BufferedReader br=null;
-		FileOutputStream fos=null;
-		BufferedOutputStream bw=null;
-		
-		String typemessage="";
-		int sizemessage=0;
-		int count=0;
-		int a;
-		byte[] datalist=null;
-		try{
-			
-			while(true){
-			
-			cs=ss.accept();
-			isr=new InputStreamReader(cs.getInputStream());
-			br=new BufferedReader(isr);
-			typemessage=br.readLine();//read type
-
-
-			sizemessage=Integer.valueOf(br.readLine());//read size
-
-			fos=new FileOutputStream(String.valueOf(count)+"."+typemessage);
-			bw=new BufferedOutputStream(fos);
-
-			datalist=new byte[sizemessage];
-
-			while((a=bis.read(datalist,0,sizemessage))>0){
-				System.out.println(a+"\t");
-			}
-
-			for(int i=0;i<datalist.length;i++){
-				bw.write(datalist[i]+"\n");
-				bw.flush();
-			
-			}
-			}
-			bw.close();
-		}catch(Excepption ex){
-		
-			System.out.println(ex.toString());
-		}
-
-	}
 
 }
 
-
-*/
