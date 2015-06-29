@@ -13,7 +13,7 @@ public class au {
 		Socket s = null;
 		au1 server;
 
-		File f = new File("²á¤Ñ«Ç");
+		File f = new File("èŠå¤©å®¤");
 		f.mkdir();
 		File f2 = new File(f + "/user.txt");
 		try {
@@ -86,7 +86,7 @@ class logUser {
 
 	public void a() {
 
-		File f = new File("²á¤Ñ«Ç/¥Î¤á");
+		File f = new File("èŠå¤©å®¤/ç”¨æˆ¶");
 		f.mkdir();
 		try {
 
@@ -134,7 +134,7 @@ class logUser {
 					for (i = 0; i < save.size(); i++) {
 
 						if (save.get(i).indexOf(username) != -1) {
-							message = "¥Î¤á¤w¦s¦b¡A¤£¯à·s«Ø".getBytes();
+							message = "ç”¨æˆ¶å·²å­˜åœ¨ï¼Œä¸èƒ½æ–°å»º".getBytes();
 							os.write(message);
 							break;
 
@@ -152,7 +152,7 @@ class logUser {
 						}
 						fw.write(username + "\r\n");
 						fw.close();
-						message = "³Ğ«Ø¦¨¥\".getBytes();
+						message = "å‰µå»ºæˆåŠŸ".getBytes();
 						os.write(message);
 						os.flush();
 						a = 1;
@@ -170,13 +170,13 @@ class logUser {
 						j = 0;
 						loguser = saves.a();
 						if (save.size() == 0) {
-							message = "±b¸¹©Î±K½X¿ù»~".getBytes();
+							message = "å¸³è™Ÿæˆ–å¯†ç¢¼éŒ¯èª¤".getBytes();
 							os.write(message);
 						} else {
 							for (j = 0; j < loguser.size(); j++) {
 
 								if (loguser.get(j).indexOf(name) != -1) {
-									message = "±b¸¹¤wµn¤J".getBytes();
+									message = "å¸³è™Ÿå·²ç™»å…¥".getBytes();
 									os.write(message);
 									break;
 								}
@@ -187,14 +187,14 @@ class logUser {
 									if (save.get(i).indexOf(username) != -1) {
 										saves.savename(name);
 										saves.savesocket(s);
-										message = "¦¨¥\µn¤J".getBytes();
+										message = "æˆåŠŸç™»å…¥".getBytes();
 										os.write(message);
 										a = 1;
 										break;
 									}
 								}
 								if (i == save.size()) {
-									message = "±b¸¹©Î±K½X¿ù»~".getBytes();
+									message = "å¸³è™Ÿæˆ–å¯†ç¢¼éŒ¯èª¤".getBytes();
 									os.write(message);
 								}
 							}
@@ -240,7 +240,7 @@ class chat {
 	}
 
 	public void startchat() {
-		File f = new File("²á¤Ñ«Ç/¥Î¤á");
+		File f = new File("èŠå¤©å®¤/ç”¨æˆ¶");
 		box box;
 		text text;
 		try {
@@ -397,7 +397,7 @@ class text {
 			for (i = 0; i < chatnumber; i++) {
 				userchat += new String(namebyte, "UTF-8").charAt(i);
 			}
-			if (userchat.indexOf("Ãö³¬close") == 0) {
+			if (userchat.indexOf("é—œé–‰close") == 0) {
 				for (i = 0; i < save.usernumber(); i++) {
 					if (Username.equals(save.getuser(i))) {
 						deletename = save.getuser(i);
@@ -425,7 +425,7 @@ class text {
 				}
 			} else if (k < enterchatuser.getusernumber() && userchat != "") {
 				if (k == 0) {
-					if (userchat.indexOf("¼W¥[add") == 0) {
+					if (userchat.indexOf("å¢åŠ add") == 0) {
 						userchat = "";
 						chatnumber = is.read(namebyte);
 
@@ -446,7 +446,7 @@ class text {
 									enterchatuser);
 							box.boxes();
 						}
-					} else if (userchat.indexOf("§R°£delete") == 0) {
+					} else if (userchat.indexOf("åˆªé™¤delete") == 0) {
 						userchat = "";
 						chatnumber = is.read(namebyte);
 						for (i = 0; i < chatnumber; i++) {
@@ -469,20 +469,20 @@ class text {
 					} else {
 						for (i = 0; i < enterchatuser.getusernumber(); i++) {
 							os = enterchatuser.getsocket(i).getOutputStream();
-							message = ("©Ğ¥D_" + Username + ":" + userchat)
+							message = ("æˆ¿ä¸»_" + Username + ":" + userchat)
 									.getBytes();
 							os.write(message);
 						}
 					}
 				} else {
-					if (userchat.indexOf("¼W¥[add") == 0) {
+					if (userchat.indexOf("å¢åŠ add") == 0) {
 						userchat = "";
 						chatnumber = is.read(namebyte);
 
 						for (i = 0; i < chatnumber; i++) {
 							userchat += new String(namebyte, "UTF-8").charAt(i);
 						}
-					} else if (userchat.indexOf("§R°£delete") == 0) {
+					} else if (userchat.indexOf("åˆªé™¤delete") == 0) {
 						userchat = "";
 						chatnumber = is.read(namebyte);
 
@@ -614,3 +614,65 @@ class save {
 		return connectsocket.size();
 	}
 }
+/*
+import java.util.*;
+import java.io.*;
+import java.net.*;
+
+
+class dataio{
+
+
+	public static void main(String{}args){
+
+		ServerSocket ss=new ServerSocket("127.0.0.1",8888);
+		Socket cs=null;
+		InputStreamReader isr=null;
+		BufferedReader br=null;
+		FileOutputStream fos=null;
+		BufferedOutputStream bw=null;
+		
+		String typemessage="";
+		int sizemessage=0;
+		int count=0;
+		int a;
+		byte[] datalist=null;
+		try{
+			
+			while(true){
+			
+			cs=ss.accept();
+			isr=new InputStreamReader(cs.getInputStream());
+			br=new BufferedReader(isr);
+			typemessage=br.readLine();//read type
+
+
+			sizemessage=Integer.valueOf(br.readLine());//read size
+
+			fos=new FileOutputStream(String.valueOf(count)+"."+typemessage);
+			bw=new BufferedOutputStream(fos);
+
+			datalist=new byte[sizemessage];
+
+			while((a=bis.read(datalist,0,sizemessage))>0){
+				System.out.println(a+"\t");
+			}
+
+			for(int i=0;i<datalist.length;i++){
+				bw.write(datalist[i]+"\n");
+				bw.flush();
+			
+			}
+			}
+			bw.close();
+		}catch(Excepption ex){
+		
+			System.out.println(ex.toString());
+		}
+
+	}
+
+}
+
+
+*/
