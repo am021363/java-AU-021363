@@ -1,0 +1,417 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Net.Sockets;
+using System.Net;
+using System.Threading;
+using System.Text.RegularExpressions;
+using System.IO;
+
+namespace auclient
+{
+    public partial class Form1 : Form
+    {
+        public Socket s;
+        //int port = 0;
+        public Form1()
+        {
+            InitializeComponent();
+            Form.CheckForIllegalCrossThreadCalls = false;
+            //port = Convert.ToInt32(8888);
+            string ip = "127.0.0.1";
+            int port = 8888;
+
+            try
+            {
+                IPHostEntry hoste = Dns.GetHostEntry(ip);//將主機名稱或 IP 位址解析至 IPHostEntry 執行個體
+                IPEndPoint server = new IPEndPoint(hoste.AddressList[0], port);//取得或設定與主機關聯的 IP 位址清單
+                s = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+                //s.Connect(new IPEndPoint(IPAddress.Parse("127.0.1.1"), port));
+                s.Connect(server);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        } 
+        private void button1_Click(object sender, EventArgs e)
+        {
+           
+            String accout = textBox1.Text;
+            String password = textBox2.Text;
+           
+            if (textBox1.Text == "" || textBox2.Text == "")
+            {
+
+                  MessageBox.Show("請輸入帳號或密碼","訊息");
+
+            }
+            else if (!IsNumandEG(accout)  || !IsNumandEG(password))
+            {
+
+                MessageBox.Show("請不要在帳號或密碼加入中文或奇怪字元", "訊息");
+
+            }
+            else if (s != null)
+            {
+
+                byte[] q = Encoding.UTF8.GetBytes(accout);
+                s.Send(q, SocketFlags.None);
+
+                q = Encoding.UTF8.GetBytes(password);
+                s.Send(q, SocketFlags.None);
+
+                byte[] message = new byte[256];
+                s.Receive(message, SocketFlags.None);
+
+                string str = System.Text.Encoding.Default.GetString(message);
+
+                MessageBox.Show(str, "訊息");
+                textBox1.Text = "";
+                textBox2.Text = "";
+                if (str.IndexOf("成功登入") != -1 || str.IndexOf("創建成功")!=-1)
+                {
+                   this.Hide();
+                   
+                   Form2 Form2 = new Form2();
+                   Form2.FM1 = this;
+                   Form2.Show();
+                   Form3 Form3 = new Form3();
+                   Form3.FM1 = this;
+                   Form3.Show(); 
+                }
+            }
+        }
+        public bool IsNumandEG(string word)
+        {
+            Regex NumandEG = new Regex("[^A-Za-z0-9]");
+            return !NumandEG.IsMatch(word);
+        }
+    }
+
+    public class Form2 : Form
+    {
+        
+        public Button button1;
+        public Button button2;
+        public Button button3;
+        public Button button4;
+        public TextBox textbox1;
+        public TextBox textbox2;
+        public TextBox textbox3;
+        public TextBox textbox4;
+        public ListBox listbox1;
+        public ListBox listbox2;
+        public OpenFileDialog OpenFileDialog1;
+        //private System.Windows.Forms.OpenFileDialog OpenFileDialog1;
+        
+        public Form1 FM1 = null;
+        List<String> enter = new List<String>();
+        List<String> waite = new List<String>();
+
+        public Form2()
+        {
+            Text = "聊天室";
+            Size = new Size(480, 500);
+            this.button1 = new Button();
+            this.button2 = new Button();
+            this.button3 = new Button();
+            this.button4 = new Button();
+            this.textbox1 = new TextBox();
+            this.textbox2 = new TextBox();
+            this.textbox3 = new TextBox();
+            this.textbox4 = new TextBox();
+            this.listbox1 = new ListBox();
+            this.listbox2 = new ListBox();
+            this.OpenFileDialog1= new OpenFileDialog();
+            this.OpenFileDialog1.FileName = "openFileDialog1";
+            
+
+            button1.Size = new Size(90,72);
+            button1.Location = new Point(362,373);
+            button1.Text = "輸入";
+            button1.Click += new System.EventHandler(this.button1_Click);
+
+            button2.Size = new Size(45,31);
+            button2.Location = new Point(362,143);
+            button2.Text = "進入";
+            button2.Click += new System.EventHandler(this.button2_Click);
+
+            button3.Size = new Size(43,31);
+            button3.Location = new Point(413,143);
+            button3.Text = "離開";
+            button3.Click += new System.EventHandler(this.button3_Click);
+
+            button4.Size = new Size(75,23);
+            button4.Location = new Point(12,326);
+            button4.Text = "上傳";
+            button4.Click += new System.EventHandler(this.button4_Click);
+
+            textbox1.Size = new Size(342, 72);
+            textbox1.Location = new Point(12, 373);
+            textbox1.Multiline = true;
+            textbox1.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+
+            textbox2.Size = new Size(343, 308);
+            textbox2.Location = new Point(12, 12);
+            textbox2.Multiline = true;
+            textbox2.ReadOnly = true;
+            textbox2.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+
+            textbox3.Text = "等候室";
+            textbox3.Size = new Size(46, 22);
+            textbox3.Location = new Point(361, 12);
+            textbox3.Enabled = false;
+
+            textbox4.Text = "房間人數名單";
+            textbox4.Size = new Size(94, 22);
+            textbox4.Location = new Point(361, 180);
+            textbox4.Enabled = false;
+
+            listbox1.Size = new Size(95, 97);
+            listbox1.Location = new Point(361, 40);
+            listbox1.HorizontalScrollbar = true;
+            listbox1.ScrollAlwaysVisible = true;
+
+            listbox2.Size = new Size(95,97);
+            listbox2.Location = new Point(361,208);
+            listbox2.HorizontalScrollbar = true;
+            listbox2.ScrollAlwaysVisible = true;
+
+            
+
+            this.Controls.Add(button1);
+            this.Controls.Add(button2);
+            this.Controls.Add(button3);
+            this.Controls.Add(button4);
+            this.Controls.Add(textbox1);
+            this.Controls.Add(textbox2);
+            this.Controls.Add(textbox3);
+            this.Controls.Add(textbox4);
+            this.Controls.Add(listbox1);
+            this.Controls.Add(listbox2);
+            
+            Thread t = new Thread(GetDataAndUpdate);
+            t.Start();
+
+        }
+        protected override void WndProc(ref Message m)
+        {
+            const int WM_SYSCOMMAND = 0x0112;
+            const int SC_CLOSE = 0xF060;
+            if (m.Msg == WM_SYSCOMMAND && (int)m.WParam == SC_CLOSE)
+            {
+                DialogResult Result = MessageBox.Show("確定關閉表單", "表單訊息", MessageBoxButtons.YesNo);
+                if (Result == System.Windows.Forms.DialogResult.Yes)
+                {
+                    byte[] q = Encoding.UTF8.GetBytes("關閉close");
+          
+                    FM1.s.Send(q, SocketFlags.None);
+
+                    Application.Exit();
+                }
+                else
+                {
+                    return;
+                }
+
+            }
+            base.WndProc(ref m);
+        }
+        public void button1_Click(object sender, EventArgs e)
+        {
+            String chat = textbox1.Text;
+
+            byte[] q = Encoding.UTF8.GetBytes(chat);
+            if(chat!="") 
+            {
+
+                FM1.s.Send(q, SocketFlags.None);
+                this.textbox1.Text = "";
+
+            }
+        }
+        public void button2_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < waite.Count; i++)
+            {
+
+                if ((String)listbox1.SelectedItem == waite[i])
+                {
+                    byte[] q = Encoding.UTF8.GetBytes("增加add");
+                    FM1.s.Send(q, SocketFlags.None);
+                    String save = waite[i];
+                    q = Encoding.UTF8.GetBytes(save);
+                    FM1.s.Send(q, SocketFlags.None);
+                    break;
+                }
+            }
+            listbox1.ClearSelected();
+        }
+        public void button3_Click(object sender, EventArgs e)
+        {
+
+            for (int i = 0; i < enter.Count; i++)
+            {
+
+                if ((String)listbox2.SelectedItem == enter[i])
+                {
+                    byte[] q = Encoding.UTF8.GetBytes("刪除delete");
+                    FM1.s.Send(q, SocketFlags.None);
+
+                    q = Encoding.UTF8.GetBytes(enter[i]);
+                    FM1.s.Send(q, SocketFlags.None);
+                    break;
+                }
+            }
+            listbox2.ClearSelected();
+        }
+        private void button4_Click(object sender, EventArgs e)
+        {
+            string fileName;
+            //byte[] prebuffer; //傳送前
+           // byte[] postbuffer; //傳送後
+
+            if (OpenFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                System.IO.StreamReader sr = new System.IO.StreamReader(OpenFileDialog1.FileName);
+                fileName = sr.ReadToEnd();
+                this.fileName = fileName;
+                sr.Close();
+            }
+
+            string string1 = String.Format("This is text data that precedes the file.{0}", Environment.NewLine);
+            byte[] preBuf = Encoding.ASCII.GetBytes(string1);
+
+            string string2 = String.Format("This is text data that will follow the file.{0}", Environment.NewLine);
+            byte[] postBuf = Encoding.ASCII.GetBytes(string2);
+
+            //使用指定的 TransmitFileOptions 值，將檔案 fileName 和資料緩衝區傳送至已連接的 Socket 物件
+           // FM1.s.SendFile(this.fileName, preBuf, postBuf, TransmitFileOptions.UseDefaultWorkerThread);
+           // FM1.s.Shutdown(SocketShutdown.Both);
+           // FM1.s.Close();
+        }
+        public string fileName { get; set; }
+       
+        void GetDataAndUpdate()
+        {
+            while (true)
+            {
+                byte[] message = new byte[256];
+                int a;
+                try
+                {
+                      a=FM1.s.Receive(message, SocketFlags.None);
+                      int count = 0;
+                      if (message != null)
+                      {
+                          string str = System.Text.Encoding.Default.GetString(message);
+                          str = str.Substring(0, a);
+                          if(str.IndexOf("list2")==0)
+                          {
+                              FM1.s.ReceiveTimeout = 900;
+
+                              a=FM1.s.Receive(message, SocketFlags.None);
+                              str = System.Text.Encoding.Default.GetString(message);
+                              str = str.Substring(0, a);
+                              count = Convert.ToInt32(str);
+                              listbox2.Items.Clear();
+                              enter.Clear();
+                              for (int i = 0; i < count; i++)
+                              {
+                                  a=FM1.s.Receive(message, SocketFlags.None);
+                                  str = System.Text.Encoding.Default.GetString(message);
+                                  str = str.Substring(0, a);
+                                  enter.Add(str);
+                                  listbox2.Items.Add(str);
+                              }
+
+                          }
+                          else if (str.IndexOf("list1")==0)
+                          {
+                              FM1.s.ReceiveTimeout = 900;
+                              a=FM1.s.Receive(message, SocketFlags.None);
+                              str = System.Text.Encoding.Default.GetString(message);
+                              str = str.Substring(0, a);
+                              count = Convert.ToInt32(str);
+                              listbox1.Items.Clear();
+                              waite.Clear();
+
+                              for (int i = 0; i < count; i++)
+                              {
+                                   a=FM1.s.Receive(message, SocketFlags.None);
+                                   str = System.Text.Encoding.Default.GetString(message);
+                                   str = str.Substring(0, a);
+                                   waite.Add(str);
+                                   listbox1.Items.Add(str);
+                               }
+                           }    
+                       else
+                       {
+
+                            if (textbox2.Text == "")
+                            {
+                                textbox2.AppendText(str);
+                            }
+                            else
+                            {
+                                textbox2.Text += Environment.NewLine;
+                                textbox2.AppendText(str);
+                            }
+                        }
+                    }    
+                }
+                catch
+                {
+
+                }
+
+            }
+        }    
+    }
+    public class Form3 : Form
+    {
+        public Button button1; 
+        public TextBox textbox1; 
+        public ListBox listbox1;
+        public Form1 FM1 = null;
+        public Form3()
+        {
+            Text = "好友欄";
+            Size = new Size(200,400);
+
+            this.button1 = new Button(); 
+            this.textbox1 = new TextBox(); 
+            this.listbox1 = new ListBox();
+
+            button1.Size = new Size(75,23);
+            button1.Location = new Point(50,327);
+            button1.Text = "新增";
+            button1.Click += new System.EventHandler(this.button1_Click);
+
+            textbox1.Size = new Size(160,22);
+            textbox1.Location = new Point(13,13);
+
+            listbox1.Size = new Size(160,268);
+            listbox1.Location = new Point(12,53);
+            listbox1.HorizontalScrollbar = true;
+            listbox1.ScrollAlwaysVisible = true;
+
+            this.Controls.Add(button1); 
+            this.Controls.Add(textbox1); 
+            this.Controls.Add(listbox1);
+        }
+        public void button1_Click(object sender, EventArgs e)
+        {
+        }
+    }
+
+}
