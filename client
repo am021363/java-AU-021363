@@ -1,0 +1,54 @@
+import java.util.*;
+import java.io.*;
+import java.net.*;
+
+class client{
+
+
+
+	public static void main(String[]args){
+		try{
+			Socket cs=new Socket("127.1.1.1",8787);
+			Scanner input=new Scanner(System.in);
+			String filemessage;
+
+			filemessage=input.next();
+
+			File f =new File(filemessage);
+
+			FileInputStream fr=new FileInputStream(f);
+			BufferedInputStream br =new BufferedInputStream(fr);
+			DataInputStream dr=new DataInputStream(br);
+			
+			DataOutputStream dw=new DataOutputStream(cs.getOutputStream());
+
+			dw.writeUTF(f.getName());
+			dw.flush();
+			dw.writeLong((long)f.length());
+			dw.flush();
+
+			byte[] buf = new byte[16384];
+			int data=0;
+
+			while(data!=-1){
+				if(dr!=null)
+					data = dr.read(buf);
+
+				dw.write(buf,0,data);
+			}
+
+			dw.flush();
+
+			dr.close();
+			cs.close();
+
+			System.out.println("over");
+			
+		}catch(Exception ex){
+
+				System.out.println(ex.toString());
+		}
+	}
+
+
+}
