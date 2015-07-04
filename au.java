@@ -613,30 +613,55 @@ class save {
 	public int gg() {
 		return connectsocket.size();
 	}
+}
+class getdata{
 	public void getdata(){
         
-        InputStream netIn=server.getInputStream();
-	DIS=new DataInputStream(Is); 
-	PS=new PrintStream(Os); 
-  	DataInputStream in=new DataInputStream(System.in);     	
-	filename=DIS.readLine();
-        File file=new File(filename);
-        file.createNewFile();        
-	String datasize="";
-	int datasize2;
-        InputStream in=new DataInputStream(new BufferedInputStream(netIn));
-        RandomAccessFile raf=new RandomAccessFile(file,"rw");
-        byte[] buf=new byte[datasize2];
-        int num=in.read(buf);         
-        while(num!=(-1)){
-              raf.write(buf,0,num);
-              raf.skipBytes(num);
-              num=in.read(buf);
-        }
-        in.close();
-        raf.close();
-    }
-}
+        ServerSocket ss=null;
+		Socket cs=null;
+		DataInputStream is=null;
+		DataOutputStream dw;
+		FileOutputStream fw=null;
+		File f1=null;
+		int filettypestatus=0;
+		String Filemessage="";
+		byte fm=0;
+		char ftype;
+		
+		try{
+			 ss=new ServerSocket(8787);
+			while(true){
+				cs=ss.accept();
+				is=new DataInputStream(cs.getInputStream());
 
-}
+				byte[] buf = new byte[8192];
+				int passedlen= 0;
+				long len =0;
+				int data=0;
 
+				Filemessage+=is.readUTF();
+				len = is.readLong();
+
+				
+				f1=new File("2.jpg");
+				fw=new FileOutputStream(f1);
+				BufferedOutputStream bw=new BufferedOutputStream(fw);
+				dw=new DataOutputStream(bw);
+				
+				while(data!=-1){
+					if(is!=null)
+						data = is.read(buf);
+
+					passedlen += data;
+
+					dw.write(buf,0,data);
+				}
+				dw.close();
+
+			}	
+
+		}catch(Exception ex){
+
+			System.out.println(ex.toString());
+		}
+}
